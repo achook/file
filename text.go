@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"strconv"
 	"strings"
 )
@@ -33,8 +32,6 @@ func parseText(r *bufio.Reader) (Stats, error) {
 				wordLengths = append(wordLengths, wl)
 				s.StrStats.WordCount++
 			}
-
-			fmt.Println(word)
 
 			// Try to parse the word as a number
 			if val, err := strconv.ParseFloat(word, 64); err == nil {

@@ -43,6 +43,8 @@ func parseCsv(r *bufio.Reader) (Stats, error) {
 		}
 
 		s.NumStats.Mean = s.NumStats.Sum / float64(s.NumStats.Count)
+		s.StrStats.MeanWordLength = float64(s.StrStats.CharCount) / float64(s.StrStats.WordCount)
+		s.StrStats.MeanLineLength = float64(s.StrStats.CharCount) / float64(s.StrStats.LineCount)
 	}
 
 	return s, nil

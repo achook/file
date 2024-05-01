@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"encoding/json"
-	"io"
 )
 
 func traverse(v interface{}, stats *Stats) *Stats {
@@ -13,8 +12,6 @@ func traverse(v interface{}, stats *Stats) *Stats {
 			// Check if the value is numeric
 			if num, ok := value.(float64); ok {
 				handleNumber(num, stats)
-			} else if _, ok := value.(bool); ok {
-				// TODO: handle boolean
 			} else if str, ok := value.(string); ok {
 				handleString(str, stats)
 			} else {
@@ -37,7 +34,7 @@ func parseJSON(r *bufio.Reader) (Stats, error) {
 
 	// Unmarshal JSON data into a generic interface{}
 	var jsonData interface{}
-	decoder := json.NewDecoder(&io.LimitedReader{N: 20, R: r})
+	decoder := json.NewDecoder(r)
 	err := decoder.Decode(&jsonData)
 	if err != nil {
 		return Stats{}, err
