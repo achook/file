@@ -16,6 +16,12 @@ go build -o file
 ./file
 ```
 
+### Docker
+```bash
+docker build -t file .
+docker run -p 8080:8080 file
+```
+
 Then upload a file to localhost:8080/upload as a multipart form with the key "file".
 
 ## How to check metrics
@@ -25,3 +31,8 @@ prometheus --config.file=prometheus.yml
 ```
 
 ### Available metrics
+- csv_file_count: Number of CSV files uploaded
+- json_file_count: Number of JSON files uploaded
+- text_file_count: Number of text files uploaded
+- response_time: Response time of the server
+- file_size: Size of the uploaded file

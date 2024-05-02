@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"encoding/csv"
-	"strconv"
 )
 
 func parseCsv(r *bufio.Reader) (Stats, error) {
@@ -15,7 +14,8 @@ func parseCsv(r *bufio.Reader) (Stats, error) {
 		panic(err)
 	}
 
-	var s Stats
+	rs := NewRawStrStats()
+	rn := RawNumStats{}
 
 	numberOfColumns := len(header)
 
@@ -23,7 +23,11 @@ func parseCsv(r *bufio.Reader) (Stats, error) {
 	for {
 		record, err := csvReader.Read()
 		if err != nil {
-			break
+			if err.Error() == "EOF" {
+				break
+			} else {
+				return Stats{}, err
+			}
 		}
 
 		if len(record) != numberOfColumns {
@@ -32,20 +36,10 @@ func parseCsv(r *bufio.Reader) (Stats, error) {
 
 		for _, value := range record {
 			// Check if the value is numeric, value is a string
-			if f, err := strconv.ParseFloat(value, 64); err == nil {
-				s.NumStats.Sum += f
-				s.NumStats.Count++
-			} else {
-				s.StrStats.CharCount += len(value)
-				s.StrStats.WordCount++
-			}
+			handleTextWord(value, &rs, &rn)
 
 		}
-
-		s.NumStats.Mean = s.NumStats.Sum / float64(s.NumStats.Count)
-		s.StrStats.MeanWordLength = float64(s.StrStats.CharCount) / float64(s.StrStats.WordCount)
-		s.StrStats.MeanLineLength = float64(s.StrStats.CharCount) / float64(s.StrStats.LineCount)
 	}
 
-	return s, nil
+	return NewStats(&rs, &rn), nil
 }

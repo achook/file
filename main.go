@@ -11,8 +11,8 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
-func NewMetrics(reg prometheus.Registerer) *metrics {
-	m := &metrics{
+func NewMetrics(reg prometheus.Registerer) *Metrics {
+	m := &Metrics{
 		csvFilesCount: prometheus.NewCounterVec(prometheus.CounterOpts{
 			Name: "csv_files_count",
 			Help: "Number of uploaded CSV files",
@@ -46,7 +46,7 @@ func NewMetrics(reg prometheus.Registerer) *metrics {
 }
 
 type Server struct {
-	m *metrics
+	m *Metrics
 }
 
 func (s *Server) uploadFileHandler(w http.ResponseWriter, r *http.Request) {

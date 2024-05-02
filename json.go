@@ -5,29 +5,27 @@ import (
 	"encoding/json"
 )
 
-func traverse(v interface{}, stats *Stats) *Stats {
+func traverse(v interface{}, rs *RawStrStats, rn *RawNumStats) {
 	switch vv := v.(type) {
 	case map[string]interface{}:
 		for _, value := range vv {
 			// Check if the value is numeric
 			if num, ok := value.(float64); ok {
-				handleNumber(num, stats)
+				handleNumberField(num, rn)
 			} else if str, ok := value.(string); ok {
-				handleString(str, stats)
+				handleTextField(str, rs)
 			} else {
 				// If not numeric, boolean, or string, recursively traverse the value
-				traverse(value, stats)
+				traverse(value, rs, rn)
 			}
 		}
 
 	case []interface{}:
 		// Traverse through each element of the array recursively
 		for _, value := range vv {
-			traverse(value, stats)
+			traverse(value, rs, rn)
 		}
 	}
-
-	return stats
 }
 
 func parseJSON(r *bufio.Reader) (Stats, error) {
@@ -40,8 +38,11 @@ func parseJSON(r *bufio.Reader) (Stats, error) {
 		return Stats{}, err
 	}
 
-	s := Stats{}
-	traverse(jsonData, &s)
+	rs := NewRawStrStats()
+	rn := RawNumStats{}
 
-	return s, nil
+	// Traverse the JSON data
+	traverse(jsonData, &rs, &rn)
+
+	return NewStats(&rs, &rn), nil
 }

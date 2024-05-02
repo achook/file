@@ -1,8 +1,7 @@
 package main
 
 import (
-	"bufio"
-	"os"
+	"regexp"
 	"strings"
 )
 
@@ -12,14 +11,6 @@ const (
 	TypeJson
 	TypeTxt
 )
-
-func readFile(filename string) *bufio.Reader {
-	file, err := os.Open(filename)
-	if err != nil {
-		panic(err)
-	}
-	return bufio.NewReader(file)
-}
 
 func getFileType(filename string) int {
 	if filename == "" {
@@ -43,4 +34,11 @@ func getFileType(filename string) int {
 	default:
 		return TypeUnknown
 	}
+}
+
+// countEmails takes a string and returns the number of email addresses in it.
+func countEmails(s string) int {
+	pattern := `[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}`
+	re := regexp.MustCompile(pattern)
+	return len(re.FindAllString(s, -1))
 }
